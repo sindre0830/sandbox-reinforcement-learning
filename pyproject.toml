@@ -1,0 +1,25 @@
+[tool.poetry]
+name = "template_python"
+version = "0.0.0"
+description = "A template repository for Python projects."
+license = "MIT"
+authors = ["sindre0830 <sindre0830@gmail.com>"]
+readme = "README.md"
+repository = "https://github.com/sindre0830/template-python"
+packages = [{include = "template_python", from = "src"}]
+
+[tool.poetry.scripts]
+main = "template_python.main:main"
+
+[tool.poetry.dependencies]
+python = "^3.12"
+
+[tool.poetry.group.dev.dependencies]
+pytest = "^8.3.3"
+pytest-custom-exit-code = "^0.3.0"
+ipykernel = "^6.29.5"
+flake8 = "^7.1.1"
+
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"

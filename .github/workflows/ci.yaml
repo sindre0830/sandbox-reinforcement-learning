@@ -1,0 +1,92 @@
+name: Continuous Integration
+
+on:
+  pull_request:
+    branches: 'main'
+    paths:
+      - '.github/workflows/continuous-integration.yaml'
+      - 'src/**'
+      - 'tests/**'
+      - 'pyproject.toml'
+      - 'poetry.lock'
+  workflow_dispatch:
+
+jobs:
+  setup:
+    name: Setup workflow
+    runs-on: ubuntu-latest
+    outputs:
+      python_files_changed: ${{ steps.changes.outputs.python_files }}
+    permissions:
+      contents: read
+      pull-requests: read
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Check file changes
+        id: changes
+        uses: dorny/paths-filter@v2
+        with:
+          filters: |
+            python_files:
+              - 'src/**'
+              - 'tests/**'
+              - 'pyproject.toml'
+              - 'poetry.lock'
+
+  validate-python:
+    name: Validates Python package
+    runs-on: ubuntu-latest
+    needs: setup
+    if: ${{ needs.setup.outputs.python_files_changed }}
+    env:
+      CI: true # poetry environment to reduce output
+    permissions:
+      contents: read
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+
+      - name: Install Poetry
+        uses: abatilo/actions-poetry@v3
+
+      - name: Configure Poetry for caching
+        run: |
+          poetry config virtualenvs.create true --local
+          poetry config virtualenvs.in-project true --local
+
+      - name: Setup caching
+        uses: actions/cache@v4
+        with:
+          path: ./.venv
+          key: venv-${{ hashFiles('poetry.lock') }}
+
+      - name: Install dependencies
+        run: |
+          poetry install
+
+      - name: Run tests
+        run: |
+          poetry run pytest --suppress-no-test-exit-code
+
+      - name: Run linters
+        run: |
+          poetry run flake8 src/ tests/
+
+  guard:
+    name: Guard job
+    runs-on: ubuntu-latest
+    needs:
+      - setup
+      - validate-python
+    if: ${{ failure() }}
+    steps:
+      - name: Fail if previous jobs failed
+        run: |
+          exit 1
