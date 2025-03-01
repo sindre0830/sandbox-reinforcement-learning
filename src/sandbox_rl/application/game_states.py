@@ -20,10 +20,9 @@ class TicTacToe(interface.implements(sandbox_rl.core.interfaces.IGameState)):
     def get_legal_actions(self) -> typing.List[typing.Tuple[int, int]]:
         actions: typing.List[typing.Tuple[int, int]] = []
 
-        for row in range(3):
-            for col in range(3):
-                if self.board[row][col] == sandbox_rl.core.constants.EMPTY:
-                    actions.append((row, col))
+        for row, col in np.ndindex(self.board.shape):
+            if self.board[row, col] == sandbox_rl.core.constants.EMPTY:
+                actions.append((row, col))
 
         return actions
 
