@@ -2,7 +2,7 @@ import pytest
 import sandbox_rl.application.game_states
 
 
-def test_tictactoe_get_legal_actions_empty_board():
+def test_get_legal_actions_empty_board():
     # arrange
     game_state = sandbox_rl.application.game_states.TicTacToe()
     expected_actions = [(i, j) for i in range(3) for j in range(3)]
