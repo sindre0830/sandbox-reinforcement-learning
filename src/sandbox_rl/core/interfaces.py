@@ -1,5 +1,6 @@
 import interface
 import typing
+import numpy as np
 
 
 class IGameState(interface.Interface):
@@ -15,11 +16,11 @@ class IGameState(interface.Interface):
     def get_reward(self) -> float:
         raise NotImplementedError()
 
-    def check_winner(self) -> typing.Optional[typing.Any]:
+    def check_winner(self) -> int:
         raise NotImplementedError()
 
-    def next_player(self) -> typing.Any:
+    def next_player(self) -> int:
         raise NotImplementedError()
 
-    def deep_copy(self) -> "IGameState":
+    def encode_state(self) -> np.ndarray:
         raise NotImplementedError()

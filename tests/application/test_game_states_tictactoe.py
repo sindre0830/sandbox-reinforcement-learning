@@ -1,5 +1,7 @@
 import pytest
 import sandbox_rl.application.game_states
+import sandbox_rl.core.constants
+import numpy as np
 
 
 def test_get_legal_actions_empty_board():
@@ -16,11 +18,11 @@ def test_get_legal_actions_empty_board():
 
 def test_get_legal_actions_partially_filled_board():
     # arrange
-    board = [
-        ["X", None, "O"],
-        [None, "X", None],
-        [None, None, "O"]
-    ]
+    board = np.array([
+        [sandbox_rl.core.constants.PLAYER_1, sandbox_rl.core.constants.EMPTY, sandbox_rl.core.constants.PLAYER_2],
+        [sandbox_rl.core.constants.EMPTY, sandbox_rl.core.constants.PLAYER_1, sandbox_rl.core.constants.EMPTY],
+        [sandbox_rl.core.constants.EMPTY, sandbox_rl.core.constants.EMPTY, sandbox_rl.core.constants.PLAYER_2]
+    ])
     game_state = sandbox_rl.application.game_states.TicTacToe(board=board)
     expected_actions = [(0, 1), (1, 0), (1, 2), (2, 0), (2, 1)]
 
@@ -33,11 +35,11 @@ def test_get_legal_actions_partially_filled_board():
 
 def test_get_legal_actions_full_board_returns_empty_list():
     # arrange
-    board = [
-        ["X", "O", "X"],
-        ["O", "X", "O"],
-        ["X", "O", "X"]
-    ]
+    board = np.array([
+        [sandbox_rl.core.constants.PLAYER_1, sandbox_rl.core.constants.PLAYER_2, sandbox_rl.core.constants.PLAYER_1],
+        [sandbox_rl.core.constants.PLAYER_2, sandbox_rl.core.constants.PLAYER_1, sandbox_rl.core.constants.PLAYER_2],
+        [sandbox_rl.core.constants.PLAYER_1, sandbox_rl.core.constants.PLAYER_2, sandbox_rl.core.constants.PLAYER_1]
+    ])
     game_state = sandbox_rl.application.game_states.TicTacToe(board=board)
     expected_actions = []
 
@@ -50,11 +52,11 @@ def test_get_legal_actions_full_board_returns_empty_list():
 
 def test_get_legal_actions_single_empty_cell():
     # arrange
-    board = [
-        ["X", "O", "X"],
-        ["O", None, "O"],
-        ["X", "O", "X"]
-    ]
+    board = np.array([
+        [sandbox_rl.core.constants.PLAYER_1, sandbox_rl.core.constants.PLAYER_2, sandbox_rl.core.constants.PLAYER_1],
+        [sandbox_rl.core.constants.PLAYER_2, sandbox_rl.core.constants.EMPTY, sandbox_rl.core.constants.PLAYER_2],
+        [sandbox_rl.core.constants.PLAYER_1, sandbox_rl.core.constants.PLAYER_2, sandbox_rl.core.constants.PLAYER_1]
+    ])
     game_state = sandbox_rl.application.game_states.TicTacToe(board=board)
     expected_actions = [(1, 1)]
 
@@ -80,7 +82,7 @@ def test_perform_action_updates_board_and_switches_player():
     # check that the current player is switched
     assert new_game_state.current_player != initial_player
     # check that the original board remains unchanged
-    assert game_state.board[0][0] is None
+    assert game_state.board[0][0] == sandbox_rl.core.constants.EMPTY
 
 
 def test_perform_action_invalid():
@@ -96,13 +98,13 @@ def test_perform_action_invalid():
 
 def test_is_terminal_with_win():
     # arrange
-    board = [
-        ["X", "X", "X"],
-        [None, "O", None],
-        ["O", None, None]
-    ]
+    board = np.array([
+        [sandbox_rl.core.constants.PLAYER_1, sandbox_rl.core.constants.PLAYER_1, sandbox_rl.core.constants.PLAYER_1],
+        [sandbox_rl.core.constants.EMPTY, sandbox_rl.core.constants.PLAYER_2, sandbox_rl.core.constants.EMPTY],
+        [sandbox_rl.core.constants.PLAYER_2, sandbox_rl.core.constants.EMPTY, sandbox_rl.core.constants.EMPTY]
+    ])
     game_state = sandbox_rl.application.game_states.TicTacToe(
-        board=board, initial_player="X", current_player="O"
+        board=board, initial_player=sandbox_rl.core.constants.PLAYER_1, current_player=sandbox_rl.core.constants.PLAYER_2
     )
 
     # act
@@ -111,18 +113,20 @@ def test_is_terminal_with_win():
 
     # assert
     assert terminal is True
-    assert winner == "X"
+    assert winner == sandbox_rl.core.constants.PLAYER_1
 
 
 def test_is_terminal_with_tie():
     # arrange
-    board = [
-        ["X", "O", "X"],
-        ["X", "O", "O"],
-        ["O", "X", "X"]
-    ]
+    board = np.array([
+        [sandbox_rl.core.constants.PLAYER_1, sandbox_rl.core.constants.PLAYER_2, sandbox_rl.core.constants.PLAYER_1],
+        [sandbox_rl.core.constants.PLAYER_1, sandbox_rl.core.constants.PLAYER_2, sandbox_rl.core.constants.PLAYER_2],
+        [sandbox_rl.core.constants.PLAYER_2, sandbox_rl.core.constants.PLAYER_1, sandbox_rl.core.constants.PLAYER_1]
+    ])
     game_state = sandbox_rl.application.game_states.TicTacToe(
-        board=board, initial_player="X", current_player="O"
+        board=board,
+        initial_player=sandbox_rl.core.constants.PLAYER_1,
+        current_player=sandbox_rl.core.constants.PLAYER_2
     )
 
     # act
@@ -131,18 +135,20 @@ def test_is_terminal_with_tie():
 
     # assert
     assert terminal is True
-    assert winner is None
+    assert winner == sandbox_rl.core.constants.TIE
 
 
 def test_get_reward_win_initial_player():
     # arrange
-    board = [
-        ["X", "X", "X"],
-        [None, "O", None],
-        ["O", None, None]
-    ]
+    board = np.array([
+        [sandbox_rl.core.constants.PLAYER_1, sandbox_rl.core.constants.PLAYER_1, sandbox_rl.core.constants.PLAYER_1],
+        [sandbox_rl.core.constants.EMPTY, sandbox_rl.core.constants.PLAYER_2, sandbox_rl.core.constants.EMPTY],
+        [sandbox_rl.core.constants.PLAYER_2, sandbox_rl.core.constants.EMPTY, sandbox_rl.core.constants.EMPTY]
+    ])
     game_state = sandbox_rl.application.game_states.TicTacToe(
-        board=board, initial_player="X", current_player="O"
+        board=board,
+        initial_player=sandbox_rl.core.constants.PLAYER_1,
+        current_player=sandbox_rl.core.constants.PLAYER_2
     )
 
     # act
@@ -154,13 +160,15 @@ def test_get_reward_win_initial_player():
 
 def test_get_reward_win_opponent():
     # arrange
-    board = [
-        ["O", "O", "O"],
-        [None, "X", None],
-        ["X", None, None]
-    ]
+    board = np.array([
+        [sandbox_rl.core.constants.PLAYER_2, sandbox_rl.core.constants.PLAYER_2, sandbox_rl.core.constants.PLAYER_2],
+        [sandbox_rl.core.constants.EMPTY, sandbox_rl.core.constants.PLAYER_1, sandbox_rl.core.constants.EMPTY],
+        [sandbox_rl.core.constants.PLAYER_1, sandbox_rl.core.constants.EMPTY, sandbox_rl.core.constants.EMPTY]
+    ])
     game_state = sandbox_rl.application.game_states.TicTacToe(
-        board=board, initial_player="X", current_player="O"
+        board=board,
+        initial_player=sandbox_rl.core.constants.PLAYER_1,
+        current_player=sandbox_rl.core.constants.PLAYER_2
     )
 
     # act
@@ -172,13 +180,15 @@ def test_get_reward_win_opponent():
 
 def test_get_reward_no_winner():
     # arrange
-    board = [
-        ["X", "O", "X"],
-        ["X", "O", "O"],
-        ["O", "X", "X"]
-    ]
+    board = np.array([
+        [sandbox_rl.core.constants.PLAYER_1, sandbox_rl.core.constants.PLAYER_2, sandbox_rl.core.constants.PLAYER_1],
+        [sandbox_rl.core.constants.PLAYER_1, sandbox_rl.core.constants.PLAYER_2, sandbox_rl.core.constants.PLAYER_2],
+        [sandbox_rl.core.constants.PLAYER_2, sandbox_rl.core.constants.PLAYER_1, sandbox_rl.core.constants.PLAYER_1]
+    ])
     game_state = sandbox_rl.application.game_states.TicTacToe(
-        board=board, initial_player="X", current_player="O"
+        board=board,
+        initial_player=sandbox_rl.core.constants.PLAYER_1,
+        current_player=sandbox_rl.core.constants.PLAYER_2
     )
 
     # act
@@ -190,40 +200,30 @@ def test_get_reward_no_winner():
 
 def test_next_player():
     # arrange
-    game_state = sandbox_rl.application.game_states.TicTacToe(current_player="X")
+    game_state = sandbox_rl.application.game_states.TicTacToe(
+        current_player=sandbox_rl.core.constants.PLAYER_1
+    )
 
     # act
     next_player = game_state.next_player()
 
     # assert
-    assert next_player == "O"
+    assert next_player == sandbox_rl.core.constants.PLAYER_2
     # arrange again
-    game_state.current_player = "O"
+    game_state.current_player = sandbox_rl.core.constants.PLAYER_2
     # act
     next_player = game_state.next_player()
     # assert
-    assert next_player == "X"
-
-
-def test_deep_copy_independence():
-    # arrange
-    game_state = sandbox_rl.application.game_states.TicTacToe()
-
-    # act
-    copied_state = game_state.deep_copy()
-    copied_state.board[0][0] = "X"
-
-    # assert
-    assert game_state.board[0][0] is None
+    assert next_player == sandbox_rl.core.constants.PLAYER_1
 
 
 def test_str_representation():
     # arrange
-    board = [
-        ["X", None, "O"],
-        [None, "X", None],
-        ["O", None, "X"]
-    ]
+    board = np.array([
+        [sandbox_rl.core.constants.PLAYER_1, sandbox_rl.core.constants.EMPTY, sandbox_rl.core.constants.PLAYER_2],
+        [sandbox_rl.core.constants.EMPTY, sandbox_rl.core.constants.PLAYER_1, sandbox_rl.core.constants.EMPTY],
+        [sandbox_rl.core.constants.PLAYER_2, sandbox_rl.core.constants.EMPTY, sandbox_rl.core.constants.PLAYER_1]
+    ])
     game_state = sandbox_rl.application.game_states.TicTacToe(board=board)
     expected_str = "X| |O\n-----\n |X| \n-----\nO| |X"
 
@@ -232,3 +232,24 @@ def test_str_representation():
 
     # assert
     assert board_str == expected_str
+
+
+def test_encode_state():
+    # arrange
+    board = np.array([
+        [sandbox_rl.core.constants.PLAYER_1, sandbox_rl.core.constants.EMPTY, sandbox_rl.core.constants.PLAYER_2],
+        [sandbox_rl.core.constants.EMPTY, sandbox_rl.core.constants.PLAYER_1, sandbox_rl.core.constants.EMPTY],
+        [sandbox_rl.core.constants.EMPTY, sandbox_rl.core.constants.EMPTY, sandbox_rl.core.constants.PLAYER_2]
+    ])
+    game_state = sandbox_rl.application.game_states.TicTacToe(board=board)
+    expected_array = np.array([
+        sandbox_rl.core.constants.PLAYER_1, sandbox_rl.core.constants.EMPTY, sandbox_rl.core.constants.PLAYER_2,
+        sandbox_rl.core.constants.EMPTY, sandbox_rl.core.constants.PLAYER_1, sandbox_rl.core.constants.EMPTY,
+        sandbox_rl.core.constants.EMPTY, sandbox_rl.core.constants.EMPTY, sandbox_rl.core.constants.PLAYER_2
+    ])
+
+    # act
+    array = game_state.encode_state()
+
+    # assert
+    assert array.tobytes() == expected_array.tobytes()
