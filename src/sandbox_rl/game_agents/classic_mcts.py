@@ -6,11 +6,11 @@ State = TypeVar("State")
 Action = TypeVar("Action")
 
 
-class Node(Generic[State, Action]):
-    def __init__(self, state: State, parent: Optional["Node[State, Action]"] = None) -> None:
+class ClassicMctsNode(Generic[State, Action]):
+    def __init__(self, state: State, parent: Optional["ClassicMctsNode[State, Action]"] = None) -> None:
         self.state: State = state
-        self.parent: Optional["Node[State, Action]"] = parent
-        self.children: Dict[Action, "Node[State, Action]"] = {}
+        self.parent: Optional["ClassicMctsNode[State, Action]"] = parent
+        self.children: Dict[Action, "ClassicMctsNode[State, Action]"] = {}
         self.visits: int = 0
         self.total_reward: float = 0.0
         self.untried_actions: Optional[List[Action]] = None
@@ -18,9 +18,9 @@ class Node(Generic[State, Action]):
     def is_fully_expanded(self) -> bool:
         return self.untried_actions is not None and len(self.untried_actions) == 0
 
-    def best_child(self, exploration_constant: float) -> Optional["Node[State, Action]"]:
+    def best_child(self, exploration_constant: float) -> Optional["ClassicMctsNode[State, Action]"]:
         best_value: float = -float("inf")
-        best_node: Optional["Node[State, Action]"] = None
+        best_node: Optional["ClassicMctsNode[State, Action]"] = None
 
         for _, child in self.children.items():
             if child.visits == 0:
@@ -37,26 +37,26 @@ class Node(Generic[State, Action]):
         return best_node
 
 
-class ClassicMCTS(Generic[State, Action]):
+class ClassicMcts(Generic[State, Action]):
     def __init__(
         self,
         root_state: State,
         exploration_constant: float = math.sqrt(2),
         max_iterations: int = 1000,
     ) -> None:
-        self.root: Node[State, Action] = Node(root_state)
+        self.root: ClassicMctsNode[State, Action] = ClassicMctsNode(root_state)
         self.exploration_constant: float = exploration_constant
         self.max_iterations: int = max_iterations
 
     def search(self) -> Action:
         for _ in range(self.max_iterations):
-            node: Node[State, Action] = self.selection(self.root)
+            node: ClassicMctsNode[State, Action] = self.selection(self.root)
             reward: float = self.simulation(node.state)
             self.backpropagation(node, reward)
 
         return self.best_action()
 
-    def selection(self, node: Node[State, Action]) -> Node[State, Action]:
+    def selection(self, node: ClassicMctsNode[State, Action]) -> ClassicMctsNode[State, Action]:
         while not self.is_terminal(node.state):
             if node.untried_actions is None:
                 node.untried_actions = self.get_legal_actions(node.state)
@@ -64,7 +64,7 @@ class ClassicMCTS(Generic[State, Action]):
             if node.untried_actions:
                 return self.expansion(node)
 
-            next_node: Optional[Node[State, Action]] = node.best_child(self.exploration_constant)
+            next_node: Optional[ClassicMctsNode[State, Action]] = node.best_child(self.exploration_constant)
             if next_node is None:
                 break
 
@@ -72,11 +72,11 @@ class ClassicMCTS(Generic[State, Action]):
 
         return node
 
-    def expansion(self, node: Node[State, Action]) -> Node[State, Action]:
+    def expansion(self, node: ClassicMctsNode[State, Action]) -> ClassicMctsNode[State, Action]:
         action: Action = node.untried_actions.pop()
         next_state: State = self.perform_action(node.state, action)
 
-        child_node: Node[State, Action] = Node(next_state, parent=node)
+        child_node: ClassicMctsNode[State, Action] = ClassicMctsNode(next_state, parent=node)
         child_node.untried_actions = self.get_legal_actions(next_state)
 
         node.children[action] = child_node
@@ -95,7 +95,7 @@ class ClassicMCTS(Generic[State, Action]):
 
         return self.get_reward(current_state)
 
-    def backpropagation(self, node: Node[State, Action], reward: float) -> None:
+    def backpropagation(self, node: ClassicMctsNode[State, Action], reward: float) -> None:
         while node is not None:
             node.visits += 1
             node.total_reward += reward
