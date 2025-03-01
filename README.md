@@ -6,15 +6,19 @@ A template repository for Python projects.
 
 0. Install Python 3.12 from [python.org](https://www.python.org/downloads/)
 1. Install Poetry from [python-poetry.org](https://python-poetry.org/docs/)
-2. Install project dependencies:
+2. Store virtualenv in project folder for VSC support:
+    ```sh
+    poetry config virtualenvs.in-project true
+    ```
+3. Install project dependencies:
     ```sh
     poetry install
     ```
-3. Run the project:
+4. Run the project:
     ```sh
     poetry run main
     ```
-4. Run tests:
+5. Run tests:
     ```sh
     poetry run pytest
     ```

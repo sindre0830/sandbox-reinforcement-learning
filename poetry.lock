@@ -625,6 +625,22 @@ files = [
 six = ">=1.5"
 
 [[package]]
+name = "python-interface"
+version = "1.6.1"
+description = "Pythonic Interface definitions"
+optional = false
+python-versions = "*"
+files = [
+    {file = "python-interface-1.6.1.tar.gz", hash = "sha256:10e710f7e38826db0e9b5719e6c4260f68376c1d0fd9a1f9800708644bc63828"},
+]
+
+[package.dependencies]
+six = "*"
+
+[package.extras]
+test = ["pytest (>=2.8.5)", "pytest-cov (>=1.8.1)", "pytest-pep8 (>=1.0.6)", "tox (>=2.0)"]
+
+[[package]]
 name = "pywin32"
 version = "308"
 description = "Python for Window Extensions"
@@ -851,4 +867,4 @@ files = [
 [metadata]
 lock-version = "2.0"
 python-versions = "^3.12"
-content-hash = "016ea9e0c1129de7523d58a37422edf7fd122574b80083635f96670c7a3dcad2"
+content-hash = "467867dae938f5aaa3e1f230eb540652cceaa9af032f2f1157b6c8334452fb88"
