@@ -24,3 +24,8 @@ class IGameState(interface.Interface):
 
     def encode_state(self) -> np.ndarray:
         raise NotImplementedError()
+
+
+class IGameAgent(interface.Interface):
+    def select_action(self, game_state: IGameState) -> np.ndarray:
+        raise NotImplementedError()
