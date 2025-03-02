@@ -7,13 +7,13 @@ import numpy as np
 def test_get_legal_actions_empty_board():
     # arrange
     game_state = sandbox_rl.application.game_states.TicTacToe()
-    expected_actions = [(i, j) for i in range(3) for j in range(3)]
+    expected_actions = np.array([(i, j) for i in range(3) for j in range(3)])
 
     # act
     actions = game_state.get_legal_actions()
 
     # assert
-    assert set(actions) == set(expected_actions)
+    assert actions.tobytes() == expected_actions.tobytes()
 
 
 def test_get_legal_actions_partially_filled_board():
@@ -24,13 +24,13 @@ def test_get_legal_actions_partially_filled_board():
         [sandbox_rl.core.constants.EMPTY, sandbox_rl.core.constants.EMPTY, sandbox_rl.core.constants.PLAYER_2]
     ])
     game_state = sandbox_rl.application.game_states.TicTacToe(board=board)
-    expected_actions = [(0, 1), (1, 0), (1, 2), (2, 0), (2, 1)]
+    expected_actions = np.array([(0, 1), (1, 0), (1, 2), (2, 0), (2, 1)])
 
     # act
     actions = game_state.get_legal_actions()
 
     # assert
-    assert set(actions) == set(expected_actions)
+    assert actions.tobytes() == expected_actions.tobytes()
 
 
 def test_get_legal_actions_full_board_returns_empty_list():
@@ -41,13 +41,13 @@ def test_get_legal_actions_full_board_returns_empty_list():
         [sandbox_rl.core.constants.PLAYER_1, sandbox_rl.core.constants.PLAYER_2, sandbox_rl.core.constants.PLAYER_1]
     ])
     game_state = sandbox_rl.application.game_states.TicTacToe(board=board)
-    expected_actions = []
+    expected_actions = np.array([])
 
     # act
     actions = game_state.get_legal_actions()
 
     # assert
-    assert actions == expected_actions
+    assert actions.tobytes() == expected_actions.tobytes()
 
 
 def test_get_legal_actions_single_empty_cell():
@@ -58,13 +58,13 @@ def test_get_legal_actions_single_empty_cell():
         [sandbox_rl.core.constants.PLAYER_1, sandbox_rl.core.constants.PLAYER_2, sandbox_rl.core.constants.PLAYER_1]
     ])
     game_state = sandbox_rl.application.game_states.TicTacToe(board=board)
-    expected_actions = [(1, 1)]
+    expected_actions = np.array([(1, 1)])
 
     # act
     actions = game_state.get_legal_actions()
 
     # assert
-    assert actions == expected_actions
+    assert actions.tobytes() == expected_actions.tobytes()
 
 
 def test_perform_action_updates_board_and_switches_player():

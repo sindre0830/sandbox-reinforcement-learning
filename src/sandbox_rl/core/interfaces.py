@@ -4,7 +4,7 @@ import numpy as np
 
 
 class IGameState(interface.Interface):
-    def get_legal_actions(self) -> typing.List[typing.Tuple[int, int]]:
+    def get_legal_actions(self) -> np.ndarray:
         raise NotImplementedError()
 
     def perform_action(self, action: typing.Tuple[int, int]) -> "IGameState":

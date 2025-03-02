@@ -17,23 +17,17 @@ class TicTacToe(interface.implements(sandbox_rl.core.interfaces.IGameState)):
         self.initial_player = initial_player
         self.current_player = current_player
 
-    def get_legal_actions(self) -> typing.List[typing.Tuple[int, int]]:
-        actions: typing.List[typing.Tuple[int, int]] = []
-
-        for row, col in np.ndindex(self.board.shape):
-            if self.board[row, col] == sandbox_rl.core.constants.EMPTY:
-                actions.append((row, col))
-
-        return actions
+    def get_legal_actions(self) -> np.ndarray:
+        return np.argwhere(self.board == sandbox_rl.core.constants.EMPTY)
 
     def perform_action(self, action: typing.Tuple[int, int]) -> sandbox_rl.core.interfaces.IGameState:
         new_state: TicTacToe = copy.deepcopy(self)
 
         row, col = action
-        if new_state.board[row][col] != sandbox_rl.core.constants.EMPTY:
+        if new_state.board[row, col] != sandbox_rl.core.constants.EMPTY:
             raise ValueError("cell is already occupied")
 
-        new_state.board[row][col] = new_state.current_player
+        new_state.board[row, col] = new_state.current_player
         new_state.current_player = new_state.next_player()
 
         return new_state
@@ -71,7 +65,7 @@ class TicTacToe(interface.implements(sandbox_rl.core.interfaces.IGameState)):
         return sandbox_rl.core.constants.TIE
 
     def next_player(self) -> int:
-        return sandbox_rl.core.constants.PLAYER_2 if self.current_player == sandbox_rl.core.constants.PLAYER_1 else sandbox_rl.core.constants.PLAYER_1
+        return self.current_player ^ 3
 
     def encode_state(self) -> np.ndarray:
         return self.board.flatten()
