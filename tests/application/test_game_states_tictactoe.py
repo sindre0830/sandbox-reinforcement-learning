@@ -104,7 +104,9 @@ def test_is_terminal_with_win():
         [sandbox_rl.core.constants.PLAYER_2, sandbox_rl.core.constants.EMPTY, sandbox_rl.core.constants.EMPTY]
     ])
     game_state = sandbox_rl.application.game_states.TicTacToe(
-        board=board, initial_player=sandbox_rl.core.constants.PLAYER_1, current_player=sandbox_rl.core.constants.PLAYER_2
+        board=board,
+        initial_player=sandbox_rl.core.constants.PLAYER_1,
+        current_player=sandbox_rl.core.constants.PLAYER_2
     )
 
     # act
