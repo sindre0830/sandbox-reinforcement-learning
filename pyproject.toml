@@ -5,7 +5,7 @@ description = "Sandbox project for experimenting with RL."
 license = "MIT"
 authors = ["sindre0830 <sindre0830@gmail.com>"]
 readme = "README.md"
-repository = "https://github.com/sindre0830/template-python"
+repository = "https://github.com/sindre0830/sandbox-reinforcement-learning"
 packages = [{include = "sandbox_rl", from = "src"}]
 
 [tool.poetry.scripts]
@@ -15,12 +15,20 @@ main = "sandbox_rl.main:main"
 python = "^3.12"
 python-interface = "^1.6.1"
 numpy = "^2.2.3"
+torch = {version = "^2.6.0+cu126", source = "pytorch-gpu"}
+torchvision = {version = "^0.21.0+cu126", source = "pytorch-gpu"}
+torchaudio = {version = "^2.6.0+cu126", source = "pytorch-gpu"}
 
 [tool.poetry.group.dev.dependencies]
 pytest = "^8.3.3"
 pytest-custom-exit-code = "^0.3.0"
 ipykernel = "^6.29.5"
 flake8 = "^7.1.1"
+
+[[tool.poetry.source]]
+name = "pytorch-gpu"
+url = "https://download.pytorch.org/whl/cu126"
+priority = "explicit"
 
 [build-system]
 requires = ["poetry-core"]
