@@ -1,0 +1,6 @@
+EMPTY = 0
+PLAYER_1 = 1
+PLAYER_2 = 2
+
+TIE = -1
+DNF = -2
